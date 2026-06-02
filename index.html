@@ -1,82 +1,191 @@
-</header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SilkEcon</title>
 
-  <main>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-    <!-- TOOL 01 -->
-    <section>
-      <h2>Tool 01 — Real Life Budget Calculator</h2>
-      <p>Based on actual Tashkent prices — not global averages.</p>
+<body>
 
-      <label>Monthly salary (UZS)</label>
-      <input type="number" placeholder="e.g. 5000000">
+<div class="hero-bg"></div>
 
-      <label>Rent (UZS/month)</label>
-      <input type="number" placeholder="e.g. 2500000">
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Silk<span>Econ</span></div>
 
-      <label>Savings goal (%)</label>
-      <input type="number" placeholder="e.g. 10">
-    </section>
+    <div class="nav-links">
+      <a href="#budget">Calculator</a>
+      <a href="#loan">Loan Detector</a>
+      <a href="#simulator">Simulator</a>
+      <a href="#chat">AI Advisor</a>
+    </div>
 
-    <!-- TOOL 02 -->
-    <section>
-      <h2>Tool 02 — Loan Trap Detector</h2>
-      <p>Paste any loan offer and see the real cost before you sign.</p>
+    <div class="nav-tag">TASHKENT, UZ</div>
+  </div>
+</nav>
 
-      <label>Loan amount (UZS)</label>
-      <input type="number" placeholder="e.g. 3000000">
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Built for Uzbekistan 🇺🇿</div>
 
-      <label>Monthly payment (UZS)</label>
-      <input type="number" placeholder="e.g. 350000">
+  <h1>Your money <span>finally clear</span></h1>
 
-      <label>Duration (months)</label>
-      <input type="number" placeholder="e.g. 12">
-    </section>
+  <p>
+    The first financial planning tool built around real Uzbek salaries,
+    Tashkent prices, and real loans.
+  </p>
 
-    <!-- TOOL 03 -->
-    <section>
-      <h2>Tool 03 — Can I Afford It?</h2>
-      <p>See how long it takes to afford a big purchase.</p>
+  <a class="cta-btn" href="#budget">Start with your salary →</a>
 
-      <label>Monthly income (UZS)</label>
-      <input type="number" placeholder="e.g. 5000000">
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">4.9M</div>
+      <div class="stat-label">Avg UZS salary</div>
+    </div>
 
-      <label>Goal cost (UZS)</label>
-      <input type="number" placeholder="e.g. 15000000">
+    <div>
+      <div class="stat-num">7.3%</div>
+      <div class="stat-label">Inflation 2025</div>
+    </div>
 
-      <label>Monthly expenses (UZS)</label>
-      <input type="number" placeholder="e.g. 4000000">
-    </section>
+    <div>
+      <div class="stat-num">0.7x</div>
+      <div class="stat-label">Monthly coverage</div>
+    </div>
+  </div>
+</section>
 
-    <!-- TOOL 04 -->
-    <section>
-      <h2>Tool 04 — AI Financial Advisor</h2>
+<!-- TOOL 1 -->
+<section class="tool-section" id="budget">
+  <div class="section-label">Tool 01</div>
+  <h2>Real Life <span>Budget Calculator</span></h2>
+  <p class="section-desc">Based on real Tashkent prices — not global averages.</p>
 
-      <div class="chat-box">
-        <p><strong>SE:</strong> Assalomu alaykum! I'm your SilkEcon advisor. Ask me anything about budgeting, loans, saving, or managing money in Uzbekistan.</p>
-
-        <div class="quick-actions">
-          <button>💰 Budget my salary</button>
-          <button>⚠️ Uzum Nasiya trap?</button>
-          <button>💵 UZS vs USD</button>
-          <button>🛡️ Save on tight budget</button>
-        </div>
-
-        <input type="text" placeholder="Ask about budgeting, loans, savings...">
-        <button>Send</button>
+  <div class="tool-card">
+    <div class="tool-inputs">
+      <div class="input-group">
+        <label>Monthly salary (UZS)</label>
+        <input type="number" placeholder="e.g. 5000000">
       </div>
 
-      <p><small>Educational tool only. Not professional financial advice.</small></p>
-    </section>
+      <div class="input-group">
+        <label>Rent (UZS)</label>
+        <input type="number" placeholder="e.g. 2500000">
+      </div>
 
-  </main>
+      <div class="input-group">
+        <label>Savings (%)</label>
+        <input type="number" placeholder="e.g. 10">
+      </div>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <p><strong>SilkEcon</strong></p>
-    <p>Built by a student economist in Tashkent. Open source on GitHub.</p>
-    <p>Data sources: Numbeo, Central Bank of Uzbekistan, State Statistics Committee</p>
-  </footer>
+<!-- TOOL 2 -->
+<section class="tool-section" id="loan">
+  <div class="section-label">Tool 02</div>
+  <h2>Loan Trap <span>Detector</span></h2>
+  <p class="section-desc">See real cost before you sign any loan.</p>
 
-  <script src="app.js"></script>
+  <div class="tool-card">
+    <div class="tool-inputs">
+      <div class="input-group">
+        <label>Loan amount</label>
+        <input type="number" placeholder="e.g. 3000000">
+      </div>
+
+      <div class="input-group">
+        <label>Monthly payment</label>
+        <input type="number" placeholder="e.g. 350000">
+      </div>
+
+      <div class="input-group">
+        <label>Duration (months)</label>
+        <input type="number" placeholder="e.g. 12">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOL 3 -->
+<section class="tool-section" id="simulator">
+  <div class="section-label">Tool 03</div>
+  <h2>Can I <span>Afford It?</span></h2>
+  <p class="section-desc">See how long it takes to afford big purchases.</p>
+
+  <div class="tool-card">
+    <div class="tool-inputs">
+      <div class="input-group">
+        <label>Income</label>
+        <input type="number" placeholder="e.g. 5000000">
+      </div>
+
+      <div class="input-group">
+        <label>Goal cost</label>
+        <input type="number" placeholder="e.g. 15000000">
+      </div>
+
+      <div class="input-group">
+        <label>Expenses</label>
+        <input type="number" placeholder="e.g. 4000000">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAT -->
+<section class="tool-section alt" id="chat">
+  <div class="section-label">Tool 04</div>
+  <h2>AI Financial <span>Advisor</span></h2>
+  <p class="section-desc">Ask anything about money in Uzbekistan.</p>
+
+  <div class="tool-card chat-card">
+
+    <div class="chat-box">
+      <div class="msg">
+        <div class="avatar">SE</div>
+        <div class="bubble">
+          Assalomu alaykum! Ask me about budgeting, loans, saving, or money in Uzbekistan.
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-chips">
+      <button class="chip">💰 Budget my salary</button>
+      <button class="chip">⚠️ Loan trap?</button>
+      <button class="chip">💵 UZS vs USD</button>
+      <button class="chip">🛡️ Save money</button>
+    </div>
+
+    <div class="chat-input-row">
+      <input id="chat-input" placeholder="Ask about money..." />
+      <button id="send-btn">Send</button>
+    </div>
+
+    <div class="disclaimer">
+      Educational tool only. Not financial advice.
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="logo">Silk<span>Econ</span></div>
+
+    <p>Built by a student economist in Tashkent.</p>
+    <p>Data: Central Bank of Uzbekistan, State Statistics Committee</p>
+
+    <p class="footer-sub">Open source on GitHub</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
 
 </body>
 </html>
