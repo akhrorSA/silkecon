@@ -1,74 +1,82 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>SilkEcon</title>
+</header>
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <main>
 
-SilkEcon
-Calculator Loan Detector Simulator AI Advisor
-Tashkent, UZ
-Built for Uzbekistan 🇺🇿
-Your money.
-Finally clear.
-The first financial planning tool built around real Uzbek salaries, actual Tashkent prices, and the loans you're actually being offered.
+    <!-- TOOL 01 -->
+    <section>
+      <h2>Tool 01 — Real Life Budget Calculator</h2>
+      <p>Based on actual Tashkent prices — not global averages.</p>
 
-Start with your salary →
-4.9M
-Avg UZS salary
-7.3%
-Inflation 2025
-0.7x
-Months covered by avg salary
-Tool 01
-Real Life Budget Calculator
-Based on actual Tashkent prices — not global averages. See if your lifestyle is mathematically sustainable.
+      <label>Monthly salary (UZS)</label>
+      <input type="number" placeholder="e.g. 5000000">
 
-Monthly salary (UZS) 
-e.g. 5000000
-Rent (UZS/month) 
-e.g. 2500000
-Savings goal (%) 
-e.g. 10
-Tool 02
-Loan Trap Detector
-Paste any loan offer — Payme Nasiya, Uzum, bank installment. See the real cost before you sign.
+      <label>Rent (UZS/month)</label>
+      <input type="number" placeholder="e.g. 2500000">
 
-Loan amount (UZS) 
-e.g. 3000000
-Monthly payment (UZS) 
-e.g. 350000
-Duration (months) 
-e.g. 12
-Tool 03
-Can I Afford It?
-Planning a big purchase? See exactly how long it will take and what you'll sacrifice.
+      <label>Savings goal (%)</label>
+      <input type="number" placeholder="e.g. 10">
+    </section>
 
-My monthly income (UZS) 
-e.g. 5000000
-Goal cost (UZS) 
-e.g. 15000000
-Monthly expenses (UZS) 
-e.g. 4000000
-Tool 04
-AI Financial Advisor
-Ask anything about money in Uzbekistan. Get answers that actually apply to your life — in English or Uzbek.
+    <!-- TOOL 02 -->
+    <section>
+      <h2>Tool 02 — Loan Trap Detector</h2>
+      <p>Paste any loan offer and see the real cost before you sign.</p>
 
-SE
-Assalomu alaykum! I'm your SilkEcon advisor. Ask me anything about budgeting, loans, saving, or managing money in Uzbekistan. I understand UZS, Payme, Uzum, local banks, and real Tashkent prices.
-💰 Budget my salary ⚠️ Uzum Nasiya trap? 💵 UZS vs USD 🛡️ Save on tight budget
-Ask about budgeting, loans, savings…
- Send
-Educational tool only. Not professional financial advice.
+      <label>Loan amount (UZS)</label>
+      <input type="number" placeholder="e.g. 3000000">
 
-SilkEcon
-Built by a student economist in Tashkent. Open source on GitHub.
+      <label>Monthly payment (UZS)</label>
+      <input type="number" placeholder="e.g. 350000">
 
-Data sources: Numbeo, Central Bank of Uzbekistan, State Statistics Committee
+      <label>Duration (months)</label>
+      <input type="number" placeholder="e.g. 12">
+    </section>
 
-<script src="app.js"></script>
+    <!-- TOOL 03 -->
+    <section>
+      <h2>Tool 03 — Can I Afford It?</h2>
+      <p>See how long it takes to afford a big purchase.</p>
+
+      <label>Monthly income (UZS)</label>
+      <input type="number" placeholder="e.g. 5000000">
+
+      <label>Goal cost (UZS)</label>
+      <input type="number" placeholder="e.g. 15000000">
+
+      <label>Monthly expenses (UZS)</label>
+      <input type="number" placeholder="e.g. 4000000">
+    </section>
+
+    <!-- TOOL 04 -->
+    <section>
+      <h2>Tool 04 — AI Financial Advisor</h2>
+
+      <div class="chat-box">
+        <p><strong>SE:</strong> Assalomu alaykum! I'm your SilkEcon advisor. Ask me anything about budgeting, loans, saving, or managing money in Uzbekistan.</p>
+
+        <div class="quick-actions">
+          <button>💰 Budget my salary</button>
+          <button>⚠️ Uzum Nasiya trap?</button>
+          <button>💵 UZS vs USD</button>
+          <button>🛡️ Save on tight budget</button>
+        </div>
+
+        <input type="text" placeholder="Ask about budgeting, loans, savings...">
+        <button>Send</button>
+      </div>
+
+      <p><small>Educational tool only. Not professional financial advice.</small></p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p><strong>SilkEcon</strong></p>
+    <p>Built by a student economist in Tashkent. Open source on GitHub.</p>
+    <p>Data sources: Numbeo, Central Bank of Uzbekistan, State Statistics Committee</p>
+  </footer>
+
+  <script src="app.js"></script>
+
 </body>
 </html>
