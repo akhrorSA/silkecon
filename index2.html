@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SilkEcon — Uzbekistan Remittance Economy Tool</title>
+  <meta name="description" content="Financial planning tools built for Uzbek households with relatives working abroad. Remittance corridor optimizer, budget calculator, return planner, loan detector. Data from World Bank and Central Bank of Uzbekistan." />
+  <meta name="keywords" content="Uzbekistan finance, remittances, UZS, financial planning, migrant workers, pul o'tkazma, moliyaviy rejalashtirish" />
+  <meta property="og:title" content="SilkEcon — Uzbekistan Remittance Economy" />
+  <meta property="og:description" content="14.4% of Uzbekistan's GDP travels home in wire transfers. The families behind those numbers finally have a tool built for their reality." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://akhrorsa.github.io/silkecon/" />
+  <meta name="theme-color" content="#0E56A0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --canvas:   #F4F7FA;
+      --surface:  #FFFFFF;
+      --ink:      #0F1923;
+      --muted:    #64748B;
+      --border:   #DDE5EE;
+      --border-s: #C2CDD8;
+
+      --blue:     #0E56A0;
+      --blue-dk:  #0A3E78;
+      --amber:    #C47E12;
+      --green:    #0F7A47;
+      --red:      #C83030;
+
+      --r:   8px;
+      --r-l: 14px;
+      --max: 1160px;
+
+      --ff-d: 'Playfair Display', Georgia, serif;
+      --ff-b: 'Source Sans 3', system-ui, sans-serif;
+      --ff-m: 'IBM Plex Mono', 'Courier New', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-b);
+      background: var(--canvas);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── TYPOGRAPHY ──────────────────────────────────────────── */
+    h1, h2, h3 { font-family: var(--ff-d); font-weight: 700; line-height: 1.2; }
+
+    /* ── LAYOUT ──────────────────────────────────────────────── */
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* ── HEADER ──────────────────────────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .h-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 28px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--ff-d);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--ink);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .logo-mark {
+      width: 24px;
+      height: 24px;
+      background: var(--blue);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-mark svg { width: 13px; height: 13px; }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .18s;
+    }
+    nav a:hover { color: var(--ink); }
+    .loc-tag {
+      font-family: var(--ff-m);
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: .04em;
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0 60px;
+    }
+    .hero-grid {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 28px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .hero-eyebrow {
+      font-family: var(--ff-m);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 18px;
+    }
+    .hero-h1 {
+      font-size: clamp(30px, 3.8vw, 50px);
+      line-height: 1.08;
+      margin-bottom: 18px;
+    }
+    .hero-h1 em {
+      font-style: normal;
+      color: var(--blue);
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 500px;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 36px;
+    }
+    .stat-v {
+      font-family: var(--ff-m);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--ink);
+      display: block;
+    }
+    .stat-l {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── SVG CORRIDOR MAP ────────────────────────────────────── */
+    .corridor-svg-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-l);
+      overflow: hidden;
+    }
+    .corridor-svg-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    @keyframes dash-flow {
+      to { stroke-dashoffset: -26; }
+    }
+    .flow-line {
+      fill: none;
+      stroke: var(--blue);
+      stroke-dasharray: 8 5;
+      animation: dash-flow 1.8s linear infinite;
+    }
+    .flow-line.lg { stroke-width: 2.4; stroke-opacity: .75; animation-duration: 1.5s; }
+    .flow-line.md { stroke-width: 1.7; stroke-opacity: .55; animation-duration: 1.9s; }
+    .flow-line.sm { stroke-width: 1.2; stroke-opacity: .38; animation-duration: 2.2s; }
+
+    /* ── TOOLS SECTION ───────────────────────────────────────── */
+    .tools-wrap {
+      padding: 72px 0;
+    }
+    .section-eyebrow {
+      font-family: var(--ff-m);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .section-h2 { font-size: 26px; margin-bottom: 40px; }
+
+    /* Tool card */
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-l);
+      padding: 36px;
+      margin-bottom: 20px;
+    }
+    .tool-card.featured { border-color: var(--blue); border-width: 2px; }
+
+    .tool-tag {
+      font-family: var(--ff-m);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .tool-tag.gold { color: var(--amber); }
+    .tool-h3 { font-size: 21px; margin-bottom: 6px; }
+    .tool-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .tool-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* Fields */
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    label .opt { font-weight: 400; color: var(--muted); font-size: 12px; }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      padding: 9px 13px;
+      border: 1px solid var(--border-s);
+      border-radius: var(--r);
+      font-family: var(--ff-m);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--canvas);
+      width: 100%;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(14,86,160,.1);
+      background: var(--surface);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+    .range-label {
+      font-family: var(--ff-m);
+      font-size: 14px;
+      color: var(--blue);
+      font-weight: 500;
+    }
+
+    .btn {
+      padding: 11px 22px;
+      border-radius: var(--r);
+      border: none;
+      cursor: pointer;
+      font-family: var(--ff-b);
+      font-size: 14px;
+      font-weight: 600;
+      transition: all .18s;
+    }
+    .btn-blue {
+      background: var(--blue);
+      color: #fff;
+    }
+    .btn-blue:hover {
+      background: var(--blue-dk);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(14,86,160,.22);
+    }
+    .btn-blue:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* Result panel */
+    .result {
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 22px;
+      min-height: 190px;
+    }
+    .result.lit { border-color: var(--blue); }
+    .result-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 190px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+    .row:last-child { border-bottom: none; }
+    .row-k { font-size: 13px; color: var(--muted); }
+    .row-v {
+      font-family: var(--ff-m);
+      font-size: 14px;
+      color: var(--ink);
+      text-align: right;
+    }
+    .row-v.ok { color: var(--green); }
+    .row-v.warn { color: var(--amber); }
+    .row-v.bad { color: var(--red); }
+
+    /* Alerts */
+    .alert {
+      padding: 11px 15px;
+      border-radius: var(--r);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+    .a-warn { background: #FEF9EE; border: 1px solid #F59E0B; color: #7C4D00; }
+    .a-bad  { background: #FEF2F2; border: 1px solid #F87171; color: #9B1C1C; }
+    .a-ok   { background: #F0FDF4; border: 1px solid #6EE7B7; color: #064E3B; }
+
+    /* Data table */
+    .t { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .t th {
+      text-align: left;
+      padding: 7px 11px;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--border-s);
+      font-family: var(--ff-m);
+      font-size: 10px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .t td { padding: 9px 11px; border-bottom: 1px solid var(--border); font-family: var(--ff-m); }
+    .t tr.best td { background: #EFF6FF; font-weight: 500; }
+    .badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .b-g { background: #DCFCE7; color: #15803D; }
+    .b-r { background: #FEE2E2; color: #B91C1C; }
+
+    /* Chart wrap */
+    .chart-box {
+      position: relative;
+      height: 195px;
+      margin-top: 14px;
+      display: none;
+    }
+
+    /* ── CHAT ────────────────────────────────────────────────── */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .chip {
+      padding: 5px 13px;
+      border-radius: 20px;
+      border: 1px solid var(--border-s);
+      font-size: 12px;
+      cursor: pointer;
+      background: var(--surface);
+      color: var(--ink);
+      transition: all .15s;
+    }
+    .chip:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    .chat-shell {
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+    }
+    .chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .msg {
+      max-width: 82%;
+      padding: 9px 13px;
+      border-radius: var(--r);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .msg-b { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; }
+    .msg-u { background: var(--blue); color: #fff; align-self: flex-end; }
+    .chat-foot {
+      display: flex;
+      gap: 8px;
+      padding: 14px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 0 0 var(--r) var(--r);
+    }
+    .chat-foot input {
+      flex: 1;
+      padding: 9px 13px;
+      border: 1px solid var(--border-s);
+      border-radius: var(--r);
+      font-family: var(--ff-b);
+      font-size: 14px;
+      background: var(--canvas);
+    }
+    .chat-foot input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(14,86,160,.1);
+    }
+
+    /* ── RESEARCH ─────────────────────────────────────────────── */
+    .research {
+      background: #0A1220;
+      padding: 68px 0;
+    }
+    .research .section-eyebrow { color: rgba(148,163,184,.6); }
+    .research-h2 { color: #F1F5F9; font-size: 26px; margin-bottom: 24px; }
+    .r-grid {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 52px;
+      align-items: start;
+    }
+    .r-body p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #94A3B8;
+      margin-bottom: 15px;
+    }
+    .r-body strong { color: #E2E8F0; }
+    .src-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .src-list li {
+      font-family: var(--ff-m);
+      font-size: 11px;
+      color: #64748B;
+      border-left: 2px solid rgba(14,86,160,.45);
+      padding-left: 11px;
+      line-height: 1.5;
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+    }
+    .f-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .f-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .f-links { display: flex; gap: 22px; }
+    .f-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .15s; }
+    .f-links a:hover { color: var(--ink); }
+
+    /* ── MISC ────────────────────────────────────────────────── */
+    .note { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 8px; }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .hero-grid   { grid-template-columns: 1fr; gap: 36px; }
+      .tool-cols   { grid-template-columns: 1fr; }
+      .r-grid      { grid-template-columns: 1fr; }
+      .corridor-svg-wrap { display: none; }
+      .hero-stats  { flex-wrap: wrap; gap: 20px; }
+    }
+    @media (max-width: 540px) {
+      nav a, .loc-tag { display: none; }
+      .hero { padding: 48px 0 40px; }
+      .tool-card { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HEADER ═══ -->
+<header>
+  <div class="h-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 10 L6.5 2 L11 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3.5 7.5 L9.5 7.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      SilkEcon
+    </a>
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#research">Research</a>
+      <a href="#about">About</a>
+      <span class="loc-tag">TASHKENT · UZ</span>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════ HERO ════ -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">Development Economics &nbsp;·&nbsp; Household Finance</div>
+      <h1 class="hero-h1">
+        Two economies run<br>
+        Uzbekistan.<br>
+        <em>This tool sees both.</em>
+      </h1>
+      <p class="hero-sub">
+        $16.6 billion arrived from abroad last year — 14.4% of everything the country produces.
+        The households behind those transfers, and the workers sending them, have no financial tool
+        built for their actual situation. Until now.
+      </p>
+      <div class="hero-stats">
+        <div>
+          <span class="stat-v">14.4%</span>
+          <div class="stat-l">of GDP in remittances</div>
+        </div>
+        <div>
+          <span class="stat-v">4.5M</span>
+          <div class="stat-l">Uzbek workers abroad</div>
+        </div>
+        <div>
+          <span class="stat-v">$16.6B</span>
+          <div class="stat-l">sent home in 2024</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORRIDOR MAP SVG -->
+    <div class="corridor-svg-wrap">
+      <svg viewBox="0 0 500 390" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
+            <path d="M0,0 L0,5 L7,2.5 z" fill="#0E56A0" opacity=".65"/>
+          </marker>
+        </defs>
+
+        <rect width="500" height="390" fill="#F4F7FA" rx="0"/>
+
+        <!-- Title -->
+        <text x="250" y="26" font-family="IBM Plex Mono,monospace" font-size="10" fill="#94A3B8"
+              text-anchor="middle" letter-spacing=".07em">UZBEKISTAN REMITTANCE CORRIDORS · 2024</text>
+
+        <!-- ── Flow paths (from country → UZ) ── -->
+        <!-- Russia 57% -->
+        <path class="flow-line lg" d="M 172,100 Q 200,148 225,175" marker-end="url(#arr)"/>
+        <!-- Kazakhstan 15% -->
+        <path class="flow-line md" d="M 400,175 Q 362,192 308,210" marker-end="url(#arr)"/>
+        <!-- UAE 8% -->
+        <path class="flow-line md" d="M 374,298 Q 336,272 295,246" marker-end="url(#arr)"/>
+        <!-- South Korea 6% -->
+        <path class="flow-line sm" d="M 385,88 Q 348,130 296,177" marker-end="url(#arr)"/>
+        <!-- Turkey 5% -->
+        <path class="flow-line sm" d="M 128,308 Q 178,278 225,246" marker-end="url(#arr)"/>
+        <!-- Other 9% -->
+        <path class="flow-line sm" d="M 250,340 L 250,260" marker-end="url(#arr)"/>
+
+        <!-- ── Country nodes ── -->
+        <!-- Russia -->
+        <circle cx="162" cy="70" r="36" fill="#fff" stroke="#DDE5EE" stroke-width="1.5"/>
+        <text x="162" y="63" font-family="IBM Plex Mono,monospace" font-size="18" text-anchor="middle">🇷🇺</text>
+        <text x="162" y="77" font-family="IBM Plex Mono,monospace" font-size="11" fill="#0F1923" text-anchor="middle" font-weight="500">Russia</text>
+        <text x="162" y="91" font-family="IBM Plex Mono,monospace" font-size="11" fill="#C83030" text-anchor="middle" font-weight="500">57%</text>
+
+        <!-- Kazakhstan -->
+        <circle cx="428" cy="172" r="30" fill="#fff" stroke="#DDE5EE" stroke-width="1.5"/>
+        <text x="428" y="165" font-family="IBM Plex Mono,monospace" font-size="16" text-anchor="middle">🇰🇿</text>
+        <text x="428" y="178" font-family="IBM Plex Mono,monospace" font-size="10" fill="#0F1923" text-anchor="middle">Kazakhstan</text>
+        <text x="428" y="190" font-family="IBM Plex Mono,monospace" font-size="10" fill="#64748B" text-anchor="middle">15%</text>
+
+        <!-- UAE -->
+        <circle cx="398" cy="310" r="26" fill="#fff" stroke="#DDE5EE" stroke-width="1.5"/>
+        <text x="398" y="303" font-family="IBM Plex Mono,monospace" font-size="15" text-anchor="middle">🇦🇪</text>
+        <text x="398" y="316" font-family="IBM Plex Mono,monospace" font-size="10" fill="#0F1923" text-anchor="middle">UAE</text>
+        <text x="398" y="328" font-family="IBM Plex Mono,monospace" font-size="10" fill="#64748B" text-anchor="middle">8%</text>
+
+        <!-- South Korea -->
+        <circle cx="405" cy="65" r="24" fill="#fff" stroke="#DDE5EE" stroke-width="1.5"/>
+        <text x="405" y="58" font-family="IBM Plex Mono,monospace" font-size="14" text-anchor="middle">🇰🇷</text>
+        <text x="405" y="70" font-family="IBM Plex Mono,monospace" font-size="9" fill="#0F1923" text-anchor="middle">Korea</text>
+        <text x="405" y="81" font-family="IBM Plex Mono,monospace" font-size="9" fill="#64748B" text-anchor="middle">6%</text>
+
+        <!-- Turkey -->
+        <circle cx="104" cy="316" r="24" fill="#fff" stroke="#DDE5EE" stroke-width="1.5"/>
+        <text x="104" y="309" font-family="IBM Plex Mono,monospace" font-size="14" text-anchor="middle">🇹🇷</text>
+        <text x="104" y="321" font-family="IBM Plex Mono,monospace" font-size="9" fill="#0F1923" text-anchor="middle">Turkey</text>
+        <text x="104" y="332" font-family="IBM Plex Mono,monospace" font-size="9" fill="#64748B" text-anchor="middle">5%</text>
+
+        <!-- Other -->
+        <circle cx="250" cy="358" r="20" fill="#fff" stroke="#DDE5EE" stroke-width="1.5"/>
+        <text x="250" y="353" font-family="IBM Plex Mono,monospace" font-size="9" fill="#0F1923" text-anchor="middle">Other</text>
+        <text x="250" y="365" font-family="IBM Plex Mono,monospace" font-size="9" fill="#64748B" text-anchor="middle">9%</text>
+
+        <!-- ── Central Uzbekistan node ── -->
+        <circle cx="250" cy="210" r="52" fill="#fff" stroke="#0E56A0" stroke-width="2.5"/>
+        <text x="250" y="200" font-family="IBM Plex Mono,monospace" font-size="22" text-anchor="middle">🇺🇿</text>
+        <text x="250" y="218" font-family="IBM Plex Mono,monospace" font-size="12" fill="#0E56A0" text-anchor="middle" font-weight="500">$16.6B</text>
+        <text x="250" y="231" font-family="IBM Plex Mono,monospace" font-size="9" fill="#94A3B8" text-anchor="middle">/year received</text>
+
+        <!-- Source note -->
+        <text x="250" y="382" font-family="IBM Plex Mono,monospace" font-size="9" fill="#94A3B8"
+              text-anchor="middle">Source: Central Bank of Uzbekistan · World Bank 2024</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ TOOLS ═══ -->
+<section class="tools-wrap" id="tools">
+  <div class="wrap">
+    <div class="section-eyebrow">Five Tools</div>
+    <h2 class="section-h2">Built for how Uzbek households actually work</h2>
+
+    <!-- ─── TOOL 1: BUDGET CALCULATOR ─── -->
+    <div class="tool-card">
+      <div class="tool-tag">Household Budget</div>
+      <h3 class="tool-h3">Real Life Budget Calculator</h3>
+      <p class="tool-desc">
+        The only budget tool that includes a remittance income field — because for millions of Uzbek families, that's how the budget actually works.
+      </p>
+      <div class="tool-cols">
+        <div class="fields">
+          <div class="field">
+            <label>Domestic salary <span class="opt">(UZS/month)</span></label>
+            <input type="number" id="b-sal" placeholder="4 900 000" />
+          </div>
+          <div class="field">
+            <label>Remittance income <span class="opt">(UZS/month, if any)</span></label>
+            <input type="number" id="b-rem" placeholder="0" />
+          </div>
+          <div class="field">
+            <label>Rent <span class="opt">(UZS/month)</span></label>
+            <input type="number" id="b-rent" placeholder="1 500 000" />
+          </div>
+          <div class="field">
+            <label>Food &amp; groceries <span class="opt">(UZS/month)</span></label>
+            <input type="number" id="b-food" placeholder="900 000" />
+          </div>
+          <div class="field">
+            <label>Utilities + transport <span class="opt">(UZS/month)</span></label>
+            <input type="number" id="b-util" placeholder="400 000" />
+          </div>
+          <div class="field">
+            <label>Other expenses <span class="opt">(UZS/month)</span></label>
+            <input type="number" id="b-oth" placeholder="300 000" />
+          </div>
+          <div class="field">
+            <label>Monthly savings target: <span class="range-label" id="b-pct-lbl">10%</span></label>
+            <input type="range" id="b-pct" min="0" max="50" value="10"
+                   oninput="document.getElementById('b-pct-lbl').textContent=this.value+'%'" />
+          </div>
+          <button class="btn btn-blue" onclick="runBudget()">Calculate</button>
+        </div>
+        <div>
+          <div class="result" id="b-res">
+            <div class="result-empty">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+              Enter income &amp; expenses above
+            </div>
+          </div>
+          <div class="chart-box" id="b-chart-wrap">
+            <canvas id="b-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TOOL 2: LOAN DETECTOR ─── -->
+    <div class="tool-card">
+      <div class="tool-tag">Loan Analysis</div>
+      <h3 class="tool-h3">Loan Trap Detector</h3>
+      <p class="tool-desc">Uzbek consumer loans often bury the real APR. Enter what the bank told you — see what you'll actually pay.</p>
+      <div class="tool-cols">
+        <div class="fields">
+          <div class="field">
+            <label>Loan amount <span class="opt">(UZS)</span></label>
+            <input type="number" id="l-amt" placeholder="10 000 000" />
+          </div>
+          <div class="field">
+            <label>Monthly payment <span class="opt">(UZS)</span></label>
+            <input type="number" id="l-pay" placeholder="350 000" />
+          </div>
+          <div class="field">
+            <label>Loan duration <span class="opt">(months)</span></label>
+            <input type="number" id="l-dur" placeholder="36" />
+          </div>
+          <div class="field">
+            <label>Your monthly income <span class="opt">(UZS, optional)</span></label>
+            <input type="number" id="l-inc" placeholder="4 900 000" />
+          </div>
+          <button class="btn btn-blue" onclick="runLoan()">Analyze Loan</button>
+        </div>
+        <div class="result" id="l-res">
+          <div class="result-empty">Enter loan details to detect traps</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TOOL 3: REMITTANCE OPTIMIZER (NEW SIGNATURE) ─── -->
+    <div class="tool-card featured">
+      <div class="tool-tag gold">★ Signature Tool</div>
+      <h3 class="tool-h3">Remittance Corridor Optimizer</h3>
+      <p class="tool-desc">
+        Compare transfer services side-by-side and find the cheapest way to send money home. Works for Russia, Kazakhstan, UAE, South Korea, Turkey, and more.
+      </p>
+      <div class="tool-cols">
+        <div class="fields">
+          <div class="field">
+            <label>Amount to send</label>
+            <input type="number" id="r-amt" placeholder="50 000" />
+          </div>
+          <div class="field">
+            <label>Source currency</label>
+            <select id="r-cur">
+              <option value="RUB">🇷🇺 Russian Ruble (RUB)</option>
+              <option value="USD">🇺🇸 US Dollar (USD)</option>
+              <option value="EUR">🇪🇺 Euro (EUR)</option>
+              <option value="KZT">🇰🇿 Kazakhstani Tenge (KZT)</option>
+              <option value="KRW">🇰🇷 South Korean Won (KRW)</option>
+              <option value="TRY">🇹🇷 Turkish Lira (TRY)</option>
+              <option value="AED">🇦🇪 UAE Dirham (AED)</option>
+            </select>
+          </div>
+          <button class="btn btn-blue" onclick="runRemittance()">Compare Services</button>
+          <p class="note">Rates are mid-market approximations. Always verify with the service before transferring.</p>
+        </div>
+        <div class="result" id="r-res">
+          <div class="result-empty">Select amount and currency to compare</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TOOL 4: RETURN HOME PLANNER (NEW) ─── -->
+    <div class="tool-card">
+      <div class="tool-tag">Migration Finance</div>
+      <h3 class="tool-h3">Return Home Planner</h3>
+      <p class="tool-desc">Working abroad? Calculate when your savings will be enough to return home — and see the exact savings curve month by month.</p>
+      <div class="tool-cols">
+        <div class="fields">
+          <div class="field">
+            <label>Monthly income abroad <span class="opt">(USD)</span></label>
+            <input type="number" id="rp-inc" placeholder="800" />
+          </div>
+          <div class="field">
+            <label>Monthly expenses abroad <span class="opt">(USD)</span></label>
+            <input type="number" id="rp-exp" placeholder="500" />
+          </div>
+          <div class="field">
+            <label>Savings goal to return <span class="opt">(UZS)</span></label>
+            <input type="number" id="rp-goal" placeholder="50 000 000" />
+          </div>
+          <div class="field">
+            <label>Already saved <span class="opt">(UZS)</span></label>
+            <input type="number" id="rp-cur" placeholder="0" />
+          </div>
+          <button class="btn btn-blue" onclick="runReturn()">Plan My Return</button>
+        </div>
+        <div>
+          <div class="result" id="rp-res">
+            <div class="result-empty">Enter your figures above</div>
+          </div>
+          <div class="chart-box" id="rp-chart-wrap">
+            <canvas id="rp-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TOOL 5: AI ADVISOR ─── -->
+    <div class="tool-card" id="chat">
+      <div class="tool-tag">AI Advisor</div>
+      <h3 class="tool-h3">Financial Advisor</h3>
+      <p class="tool-desc">Context-aware advice for Uzbekistan's real economy — remittances, exchange rate strategy, migration decisions, and lending.</p>
+      <div class="chips">
+        <span class="chip" onclick="chipSend(this)">When to convert RUB to UZS?</span>
+        <span class="chip" onclick="chipSend(this)">Best transfer service from Russia?</span>
+        <span class="chip" onclick="chipSend(this)">Should I save in USD or UZS?</span>
+        <span class="chip" onclick="chipSend(this)">How to reduce ruble income risk?</span>
+        <span class="chip" onclick="chipSend(this)">Is this loan worth taking?</span>
+      </div>
+      <div class="chat-shell">
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg msg-b">
+            Assalomu alaykum! I'm specialized in Uzbekistan's financial landscape — remittances, UZS/USD/RUB exchange rates, migration economics, and household finance. What's on your mind?
+          </div>
+        </div>
+        <div class="chat-foot">
+          <input type="text" id="chat-in" placeholder="Ask about remittances, exchange rates, savings strategy..."
+                 onkeydown="if(event.key==='Enter')chatSend()" />
+          <button class="btn btn-blue" id="chat-btn" onclick="chatSend()">Send</button>
+        </div>
+      </div>
+      <p class="note">Educational tool only. Not financial advice. Responses are AI-generated.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ RESEARCH ═══ -->
+<section class="research" id="research">
+  <div class="wrap">
+    <div class="r-grid">
+      <div class="r-body">
+        <div class="section-eyebrow">Research Context</div>
+        <h2 class="research-h2">The invisible financial problem</h2>
+        <p>
+          <strong>Uzbekistan receives 14.4% of its GDP in remittances</strong> — one of the
+          highest ratios in the world, and a figure that masks a deeper structural reality.
+          According to World Bank analysis, without these transfers the national poverty rate
+          would be 16.8% rather than 9.6%. Remittances are not a supplement to the Uzbek economy.
+          They are a pillar of it.
+        </p>
+        <p>
+          Yet the country's financial tools — budgeting apps, loan calculators, savings guides —
+          almost uniformly ignore this reality. They assume salary income in UZS, local spending only,
+          and no currency exposure. <strong>The specific financial decisions facing remittance households
+          remain entirely unmapped:</strong> which corridor to use, when to convert RUB to UZS,
+          how to plan around ruble volatility, whether to save in USD or soms.
+        </p>
+        <p>
+          The 2022 ruble shock illustrated the stakes precisely. When sanctions caused the ruble to lose
+          25% of its dollar value, remittance income from Russia fell by an estimated 21%. Around 133,000
+          Uzbek migrants returned home in Q1 2022 alone. The financial fragility of remittance-dependent
+          households became visible in a crisis — but no tool had been built to help them manage it before one.
+        </p>
+        <p>
+          SilkEcon is an attempt to <strong>make this invisible financial decision-space legible</strong>
+          at the household level. The tools here model the specific constraints and opportunities of
+          Uzbek families with income abroad, drawing on Central Bank, World Bank, and IOM data.
+          It is also an open research question: what is the household-level welfare cost of remittance
+          corridor fees and currency risk? The data exists to estimate it.
+        </p>
+      </div>
+      <div>
+        <div class="section-eyebrow">Data Sources</div>
+        <ul class="src-list">
+          <li>Central Bank of Uzbekistan — Exchange rates, remittance flow volumes, 2023–24</li>
+          <li>World Bank (2024) — Remittances as % of GDP; Migration &amp; Development Brief</li>
+          <li>State Committee of Statistics — Average wage, inflation, household income data</li>
+          <li>IOM Report on Central Asian Migration (2024) — Migrant worker demographics</li>
+          <li>National Interest / World Bank Brief (2022) — Ruble shock impact on UZ remittances</li>
+          <li>Ratha, D. (2007) — Remittances as a Development Tool</li>
+          <li>Gazeta.uz / Kun.uz — Local economic reporting and CBU commentary</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ FOOTER ═══ -->
+<footer id="about">
+  <div class="f-inner">
+    <div>
+      <a href="#" class="logo">
+        <span class="logo-mark">
+          <svg viewBox="0 0 13 13" fill="none"><path d="M2 10 L6.5 2 L11 10" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 7.5 L9.5 7.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </span>
+        SilkEcon
+      </a>
+      <p class="f-note">Built by a student economist in Tashkent. Data: World Bank · CBU · State Statistics Committee.</p>
+    </div>
+    <div class="f-links">
+      <a href="https://github.com/akhrorsa/silkecon" target="_blank">GitHub</a>
+      <a href="#research">Research</a>
+      <a href="#tools">Tools</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════ SCRIPT ═══ -->
+<script>
+/* ──────────────────────────────────────────
+   HELPERS
+────────────────────────────────────────── */
+const fmt = n => new Intl.NumberFormat('uz-UZ').format(Math.round(n));
+const $ = id => document.getElementById(id);
+
+/* ──────────────────────────────────────────
+   TOOL 1  — BUDGET CALCULATOR
+────────────────────────────────────────── */
+let bChart = null;
+
+function runBudget() {
+  const sal  = +($('b-sal').value)  || 0;
+  const rem  = +($('b-rem').value)  || 0;
+  const rent = +($('b-rent').value) || 0;
+  const food = +($('b-food').value) || 0;
+  const util = +($('b-util').value) || 0;
+  const oth  = +($('b-oth').value)  || 0;
+  const pct  = +($('b-pct').value) / 100;
+
+  const income   = sal + rem;
+  if (income === 0) return;
+
+  const exp      = rent + food + util + oth;
+  const savAmt   = income * pct;
+  const surplus  = income - exp - savAmt;
+  const remDep   = income > 0 ? (rem / income) * 100 : 0;
+  const expRatio = exp / income;
+
+  let alerts = '';
+  if (remDep > 50) alerts += `<div class="alert a-warn">⚠ Your income is <strong>${remDep.toFixed(0)}%</strong> dependent on remittances. If your relative works in Russia, a ruble devaluation directly reduces your purchasing power.</div>`;
+  if (surplus < 0)  alerts += `<div class="alert a-bad">✕ Monthly deficit of <strong>${fmt(Math.abs(surplus))} UZS</strong>. Spending exceeds income.</div>`;
+  else if (surplus < income * 0.04) alerts += `<div class="alert a-warn">⚠ Less than 4% margin after savings and expenses — very little buffer for unexpected costs.</div>`;
+  if (surplus > 0 && surplus < savAmt) alerts += `<div class="alert a-ok">✓ You are saving ${(pct*100).toFixed(0)}% as targeted. Surplus also available for extra savings.</div>`;
+
+  $('b-res').innerHTML = `
+    <div class="row"><span class="row-k">Total income</span><span class="row-v">${fmt(income)} UZS</span></div>
+    <div class="row"><span class="row-k">  ↳ Salary</span><span class="row-v">${fmt(sal)} UZS</span></div>
+    <div class="row"><span class="row-k">  ↳ Remittances</span><span class="row-v">${fmt(rem)} UZS</span></div>
+    <div class="row"><span class="row-k">Total expenses</span><span class="row-v">${fmt(exp)} UZS</span></div>
+    <div class="row"><span class="row-k">Savings (${(pct*100).toFixed(0)}%)</span><span class="row-v">${fmt(savAmt)} UZS</span></div>
+    <div class="row"><span class="row-k">Monthly surplus/deficit</span><span class="row-v ${surplus>=0?'ok':'bad'}">${surplus>=0?'+':''}${fmt(surplus)} UZS</span></div>
+    <div class="row"><span class="row-k">Expense-to-income ratio</span><span class="row-v ${expRatio>0.8?'warn':''}">${(expRatio*100).toFixed(0)}%</span></div>
+    <div class="row"><span class="row-k">Remittance dependency</span><span class="row-v ${remDep>40?'warn':''}">${remDep.toFixed(0)}%</span></div>
+    ${alerts}
+  `;
+  $('b-res').classList.add('lit');
+
+  const cw = $('b-chart-wrap');
+  cw.style.display = 'block';
+  if (bChart) bChart.destroy();
+  bChart = new Chart($('b-chart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Rent','Food','Utilities','Other','Savings','Surplus'],
+      datasets: [{ data: [rent,food,util,oth,savAmt,Math.max(0,surplus)],
+        backgroundColor:['#0E56A0','#0B7A8A','#C47E12','#94A3B8','#0F7A47','#DDE5EE'],
+        borderWidth:2, borderColor:'#fff' }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ font:{family:'IBM Plex Mono',size:10}, padding:10 } } }
+    }
+  });
+}
+
+/* ──────────────────────────────────────────
+   TOOL 2  — LOAN TRAP DETECTOR
+────────────────────────────────────────── */
+function runLoan() {
+  const amt  = +($('l-amt').value) || 0;
+  const pay  = +($('l-pay').value) || 0;
+  const dur  = +($('l-dur').value) || 0;
+  const inc  = +($('l-inc').value) || 0;
+  if (!amt || !pay || !dur) return;
+
+  const total   = pay * dur;
+  const interest= total - amt;
+  const intPct  = (interest / amt) * 100;
+
+  // Monthly rate via Newton's method
+  let r = 0.01;
+  for (let i = 0; i < 1000; i++) {
+    const pv  = pay * (1 - Math.pow(1+r,-dur)) / r;
+    const dpv = -pay * (dur * Math.pow(1+r,-(dur+1)) * r - (1-Math.pow(1+r,-dur))) / (r*r);
+    const nr  = r - (pv - amt) / dpv;
+    if (Math.abs(nr - r) < 1e-9) { r = nr; break; }
+    r = nr;
+  }
+  const apr  = r * 12 * 100;
+  const dti  = inc > 0 ? (pay / inc) * 100 : null;
+
+  let trap = 'Low risk'; let trapCls = 'ok';
+  if (apr > 38) { trap = 'High — likely a trap'; trapCls = 'bad'; }
+  else if (apr > 24) { trap = 'Moderate — caution'; trapCls = 'warn'; }
+
+  let alerts = '';
+  if (apr > 40) alerts += `<div class="alert a-bad">✕ APR above 40% — this loan costs you <strong>${fmt(interest)} UZS</strong> in interest alone. That is ${intPct.toFixed(0)}% on top of what you borrowed.</div>`;
+  else if (apr > 25) alerts += `<div class="alert a-warn">⚠ APR above 25%. Explore whether your bank offers a lower-rate product or consider delaying the purchase.</div>`;
+  if (dti !== null && dti > 40) alerts += `<div class="alert a-warn">⚠ Debt-to-income ratio is ${dti.toFixed(0)}%. Above 40% makes financial shocks very hard to absorb.</div>`;
+  if (apr <= 24 && (!dti || dti <= 35)) alerts += `<div class="alert a-ok">✓ Rates and DTI appear within reasonable range. Read all fine print before signing.</div>`;
+
+  $('l-res').innerHTML = `
+    <div class="row"><span class="row-k">Total amount paid</span><span class="row-v">${fmt(total)} UZS</span></div>
+    <div class="row"><span class="row-k">Total interest</span><span class="row-v bad">${fmt(interest)} UZS</span></div>
+    <div class="row"><span class="row-k">Interest as % of principal</span><span class="row-v bad">${intPct.toFixed(1)}%</span></div>
+    <div class="row"><span class="row-k">True APR (calculated)</span><span class="row-v ${apr>25?'bad':'ok'}">${apr.toFixed(1)}%</span></div>
+    ${dti!==null?`<div class="row"><span class="row-k">Debt-to-income ratio</span><span class="row-v ${dti>40?'warn':''}">${dti.toFixed(1)}%</span></div>`:''}
+    <div class="row"><span class="row-k">Trap assessment</span><span class="row-v ${trapCls}">${trap}</span></div>
+    ${alerts}
+  `;
+  $('l-res').classList.add('lit');
+}
+
+/* ──────────────────────────────────────────
+   TOOL 3  — REMITTANCE CORRIDOR OPTIMIZER
+────────────────────────────────────────── */
+// Mid-market rate to USD (approximate, mid-2025/early 2026)
+const FX_TO_USD = {
+  RUB: 1/90,    // ~90 RUB per USD
+  USD: 1,
+  EUR: 1.085,
+  KZT: 1/480,   // ~480 KZT per USD
+  KRW: 1/1440,  // ~1440 KRW per USD
+  TRY: 1/37,    // ~37 TRY per USD
+  AED: 0.2723   // fixed peg ≈ 3.67 AED per USD
+};
+const USD_TO_UZS = 12150;
+
+const SERVICES = [
+  { name:'Korona Pay',    ico:'⚡', feePct:.007, fixedUSD:0,   rateDisco:.003, corridors:['RUB','KZT'],                          speed:'Instant'    },
+  { name:'PaySend',       ico:'📱', feePct:.015, fixedUSD:0,   rateDisco:.005, corridors:['USD','EUR','AED','TRY','KRW'],         speed:'Same day'   },
+  { name:'MoneyGram',     ico:'🏦', feePct:.02,  fixedUSD:3.5, rateDisco:.008, corridors:['USD','EUR','RUB','KZT','KRW','TRY','AED'], speed:'Same day'},
+  { name:'Western Union', ico:'🌐', feePct:.025, fixedUSD:5,   rateDisco:.01,  corridors:['USD','EUR','AED','KRW','TRY'],         speed:'1–2 days'   },
+  { name:'Bank Wire',     ico:'🏛', feePct:.004, fixedUSD:14,  rateDisco:.015, corridors:['USD','EUR','AED','KRW','TRY','RUB','KZT'], speed:'2–4 days'},
+];
+
+function runRemittance() {
+  const amount = +($('r-amt').value);
+  const cur    = $('r-cur').value;
+  if (!amount || amount <= 0) return;
+
+  const usd    = amount * FX_TO_USD[cur];
+  const baseUZS= usd * USD_TO_UZS;
+
+  const results = SERVICES.map(s => {
+    const avail   = s.corridors.includes(cur);
+    const feeCost = usd * s.feePct + s.fixedUSD;
+    const netUSD  = usd - feeCost;
+    const netUZS  = netUSD * USD_TO_UZS * (1 - s.rateDisco);
+    const costPct = ((baseUZS - netUZS) / baseUZS) * 100;
+    return { ...s, avail, netUZS, costPct };
+  });
+
+  results.sort((a,b)=> b.netUZS - a.netUZS);
+  const bestAvail = results.find(r => r.avail);
+
+  const rows = results.map(r => {
+    const isBest = bestAvail && r.name === bestAvail.name && r.avail;
+    return `<tr class="${isBest?'best':''}">
+      <td>${r.ico} ${r.name} ${isBest?'<span class="badge b-g">Best</span>':''}</td>
+      <td>${r.avail ? fmt(Math.round(r.netUZS/1000))+'K UZS' : '<span class="badge b-r">Unavailable</span>'}</td>
+      <td>${r.avail ? r.costPct.toFixed(1)+'%' : '—'}</td>
+      <td>${r.speed}</td>
+    </tr>`;
+  }).join('');
+
+  const curLabel = {RUB:'Russian Rubles',USD:'US Dollars',EUR:'Euros',KZT:'Kazakhstani Tenge',KRW:'South Korean Won',TRY:'Turkish Lira',AED:'UAE Dirhams'};
+
+  $('r-res').innerHTML = `
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+      Sending <strong style="color:var(--ink)">${fmt(amount)} ${cur}</strong>
+      (≈&nbsp;$${usd.toFixed(0)}&nbsp;USD) to Uzbekistan
+    </p>
+    <table class="t">
+      <thead><tr><th>Service</th><th>Recipient gets</th><th>Total cost</th><th>Speed</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="note" style="margin-top:10px">1 USD ≈ ${USD_TO_UZS.toLocaleString()} UZS (mid-market, early 2026). Rates change daily — verify before sending.</p>
+  `;
+  $('r-res').classList.add('lit');
+}
+
+/* ──────────────────────────────────────────
+   TOOL 4  — RETURN HOME PLANNER
+────────────────────────────────────────── */
+let rpChart = null;
+
+function runReturn() {
+  const inc  = +($('rp-inc').value)  || 0;
+  const exp  = +($('rp-exp').value)  || 0;
+  const goal = +($('rp-goal').value) || 0;
+  const cur  = +($('rp-cur').value)  || 0;
+  if (!inc || !goal) return;
+
+  const mthSavUSD = inc - exp;
+  const mthSavUZS = mthSavUSD * USD_TO_UZS;
+  const remaining  = goal - cur;
+
+  if (mthSavUSD <= 0) {
+    $('rp-res').innerHTML = `<div class="alert a-bad">✕ Your expenses exceed your income abroad. No savings accumulation is possible at current figures.</div>`;
+    return;
+  }
+
+  const months   = Math.ceil(remaining / mthSavUZS);
+  const yrs      = Math.floor(months / 12);
+  const remMo    = months % 12;
+  const timeStr  = yrs > 0 ? `${yrs} yr ${remMo} mo` : `${months} months`;
+  const savRate  = (mthSavUSD / inc) * 100;
+
+  let alerts = '';
+  if (savRate < 20) alerts += `<div class="alert a-warn">⚠ Savings rate is ${savRate.toFixed(0)}%. Cutting monthly expenses by $${(exp*.1).toFixed(0)} would shorten your timeline by ~${Math.floor(months*.1)} months.</div>`;
+  else alerts += `<div class="alert a-ok">✓ Savings rate of ${savRate.toFixed(0)}% is healthy. Stay consistent and you can plan a real return date.</div>`;
+
+  $('rp-res').innerHTML = `
+    <div class="row"><span class="row-k">Monthly savings (USD)</span><span class="row-v ok">$${fmt(mthSavUSD)}</span></div>
+    <div class="row"><span class="row-k">Monthly savings (UZS)</span><span class="row-v ok">${fmt(mthSavUZS)} UZS</span></div>
+    <div class="row"><span class="row-k">Savings rate</span><span class="row-v ${savRate<20?'warn':'ok'}">${savRate.toFixed(0)}%</span></div>
+    <div class="row"><span class="row-k">Months needed</span><span class="row-v">${months}</span></div>
+    <div class="row"><span class="row-k">Return timeline</span><span class="row-v ok">≈ ${timeStr}</span></div>
+    ${alerts}
+  `;
+  $('rp-res').classList.add('lit');
+
+  // Chart — savings growth curve
+  const cw = $('rp-chart-wrap');
+  cw.style.display = 'block';
+
+  const cap  = Math.min(months, 72);
+  const lbls = [], data = [];
+  for (let m = 0; m <= cap; m++) {
+    lbls.push(m === 0 ? 'Now' : `M${m}`);
+    data.push(Math.min((cur + m * mthSavUZS) / 1e6, goal / 1e6).toFixed(2));
+  }
+
+  if (rpChart) rpChart.destroy();
+  rpChart = new Chart($('rp-chart').getContext('2d'), {
+    type:'line',
+    data:{
+      labels: lbls,
+      datasets:[
+        { label:'Your savings (M UZS)', data, borderColor:'#0E56A0',
+          backgroundColor:'rgba(14,86,160,.07)', borderWidth:2, fill:true,
+          pointRadius:0, tension:.4 },
+        { label:'Target', data: lbls.map(()=>(goal/1e6).toFixed(2)),
+          borderColor:'#0F7A47', borderWidth:1.5, borderDash:[6,4],
+          pointRadius:0, fill:false }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ font:{family:'IBM Plex Mono',size:10}, padding:8 } } },
+      scales:{
+        x:{ ticks:{ font:{family:'IBM Plex Mono',size:9}, maxTicksLimit:8 }, grid:{color:'#DDE5EE'} },
+        y:{ ticks:{ font:{family:'IBM Plex Mono',size:9} }, grid:{color:'#DDE5EE'} }
+      }
+    }
+  });
+}
+
+/* ──────────────────────────────────────────
+   TOOL 5  — AI ADVISOR
+────────────────────────────────────────── */
+const history = [];
+const SYS_PROMPT = `You are a financial advisor specialized in Uzbekistan's economy. Your expertise covers:
+- Remittances: Uzbekistan receives 14.4% of GDP in remittances (World Bank 2024 = ~$16.6B). 57% from Russia, 15% Kazakhstan, 8% UAE, rest from Korea, Turkey, others.
+- Without remittances, UZ poverty rate would be 16.8% instead of 9.6% (World Bank).
+- UZS/USD: liberalized Sept 2017 (50% overnight devaluation from 4,210 to 8,100 UZS/USD). Currently ~12,150 UZS per USD.
+- RUB risk: In 2022, ruble depreciation cut remittances to UZ by ~21%. This is the main household currency risk.
+- Transfer services: Korona Pay (Russia/KZ, ~0.7% fee, best for CIS corridor); MoneyGram, PaySend, Western Union for other corridors.
+- Uzbek consumer lending: APRs often 25–40%. Avoid loans above 30% APR unless necessary.
+- Key advice categories: when to convert RUB to UZS (time near month-end when workers get paid in bulk to diversify), USD vs UZS savings (USD for >6 month savings, UZS for short-term spending), migration planning.
+Give concise, practical, Uzbekistan-specific answers. Use UZS/USD figures where relevant. Always recommend verifying with a licensed advisor for large decisions.`;
+
+async function chatSend() {
+  const inp = $('chat-in');
+  const msg = inp.value.trim();
+  if (!msg) return;
+  addMsg(msg, 'u');
+  inp.value = '';
+  const btn = $('chat-btn');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+  history.push({ role:'user', content: msg });
+  try {
+    const res  = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: SYS_PROMPT,
+        messages: history
+      })
+    });
+    const data  = await res.json();
+    const reply = data.content?.[0]?.text || 'Sorry — could not generate a response. Please try again.';
+    history.push({ role:'assistant', content: reply });
+    addMsg(reply, 'b');
+  } catch(e) {
+    addMsg('Connection error. Please check your internet connection and try again.', 'b');
+  }
+  btn.innerHTML = 'Send';
+  btn.disabled  = false;
+}
+
+function chipSend(el) {
+  $('chat-in').value = el.textContent;
+  chatSend();
+}
+
+function addMsg(text, who) {
+  const c = $('chat-msgs');
+  const d = document.createElement('div');
+  d.className = `msg msg-${who==='u'?'u':'b'}`;
+  d.textContent = text;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+</script>
+
+<!--
+═══════════════════════════════════════════════════════════════
+  HOW TO DEPLOY TO GOOGLE (FIREBASE HOSTING)
+═══════════════════════════════════════════════════════════════
+
+  Firebase Hosting is Google's own static hosting service.
+  It's FREE for this use case, very fast (global CDN), and
+  gives you a .web.app domain (e.g. silkecon.web.app).
+
+  STEP 1 — Create a Firebase project
+    → Go to https://console.firebase.google.com
+    → Click "Add project" → name it "silkecon" → Continue
+    → Disable Google Analytics if you don't need it → Create project
+
+  STEP 2 — Install Node.js (if not installed)
+    → Download from https://nodejs.org (choose LTS version)
+    → Install normally — this also installs npm
+
+  STEP 3 — Install Firebase CLI
+    → Open Terminal (on Mac) or Command Prompt (on Windows)
+    → Type exactly:  npm install -g firebase-tools
+    → Wait for it to finish
+
+  STEP 4 — Log in to Firebase
+    → Type:  firebase login
+    → A browser window will open — sign in with your Google account
+
+  STEP 5 — Initialize your project
+    → In Terminal, navigate to your project folder:  cd path/to/silkecon
+    → Type:  firebase init hosting
+    → Answer the prompts:
+        "What do you want to use as your public directory?" → type:  .   (a single dot)
+        "Configure as a single-page app?"                  → N
+        "Set up automatic builds with GitHub?"             → N (for now)
+        "File ./index.html already exists. Overwrite?"     → N  ← IMPORTANT!
+
+  STEP 6 — Deploy!
+    → Type:  firebase deploy
+    → Wait ~30 seconds
+    → You'll see: "Hosting URL: https://silkecon.web.app"
+
+  STEP 7 — (Optional) Custom domain
+    → In Firebase Console → Hosting → Add custom domain
+    → Enter your domain, follow DNS instructions
+
+  EVERY TIME you update index.html, just run:  firebase deploy
+  That's it. The site updates in under a minute.
+
+  CONNECTING TO GITHUB (auto-deploy on every push):
+    → Run:  firebase init hosting
+    → Answer "Set up automatic builds with GitHub?" → Y
+    → This creates a GitHub Actions workflow file automatically
+    → After that, every git push to main will auto-deploy
+
+═══════════════════════════════════════════════════════════════
+-->
+
+</body>
+</html>
